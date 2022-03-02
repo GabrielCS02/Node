@@ -15,3 +15,5 @@ const Pergunta = connection.define('tb_perguntas',{
 Pergunta.sync({force: false}).then(()=>{
     console.log("Tabela criada!")
 });
+
+module.exports = Pergunta;

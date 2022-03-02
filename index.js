@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./database/database");
-const perguntaModel = require("./database/Pergunta");
+const Pergunta = require("./database/Pergunta");
 
 //Database
 connection
@@ -35,7 +35,14 @@ app.get("/perguntas",(require, response)=>{
 app.post("/salvarpergunta",(require, response)=>{
     var titulo = require.body.titulo;
     var descricao = require.body.descricao;
-    response.send("Formulário encaminhado! Título: " + titulo + "" + ", Descrição: " + descricao)
+    
+    Pergunta.create({
+        titulo: titulo,
+        descricao: descricao
+    }).then(() => { 
+        response.redirect("/");
+    });
+    
 });
 
 app.listen(4002,()=>{
