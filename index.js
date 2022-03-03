@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./database/database");
 const Pergunta = require("./database/Pergunta");
+const Resposta = require("./database/Resposta");
 
 //Database
 connection
@@ -24,8 +25,14 @@ app.use(bodyParser.json());
 
 //Rotas
 app.get("/", (require, response)=>{
-   
-    response.render("index.ejs");
+    Pergunta.findAll({raw: true, order:[
+        ['id','DESC'] // ASC = Crescente || DESC = Descrescente
+    ]}).then(perguntas =>{
+        response.render("index.ejs",{
+            perguntas: perguntas
+        });
+    })
+    
 });
 
 app.get("/perguntas",(require, response)=>{
@@ -43,6 +50,21 @@ app.post("/salvarpergunta",(require, response)=>{
         response.redirect("/");
     });
     
+});
+
+app.get("/pergunta/:id",(request,response)=>{
+    var id = request.params.id;
+    Pergunta.findOne({
+        where: {id: id}
+    }).then(pergunta => {
+        if(pergunta != undefined){ // Pergunta encontrada
+            response.render("pergunta",{
+                pergunta: pergunta
+            });
+        }else{ // Não encontrada
+            response.redirect("/");
+        }
+    });
 });
 
 app.listen(4002,()=>{
